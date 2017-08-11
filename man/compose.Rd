@@ -2,12 +2,18 @@
 % Please edit documentation in R/compose.R
 \name{compose}
 \alias{compose}
+\alias{decompose}
 \title{Compose multiple functions}
 \usage{
 compose(...)
+
+decompose(x)
 }
 \arguments{
 \item{...}{n functions to apply in order from right to left.}
+
+\item{x}{Composite function, i.e., a composition of functions created by
+\code{compose()}.}
 }
 \value{
 A function
