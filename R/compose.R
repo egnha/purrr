@@ -11,28 +11,26 @@
 #' add1 <- function(x) x + 1
 #' compose(add1, add1)(8)
 compose <- function(...) {
-  fs <- lapply(dots_list(...), rlang::as_function)
-  n <- length(fs)
+  fns <- lapply(dots_list(...), rlang::as_function)
+  n <- length(fns)
 
-  last <- as_closure(fs[[n]])
-  `__call_last` <- function() {
-    call_last <- mut_node_car(sys.call(-1), last)
+  fn_last <- as_closure(fns[[n]])
+  `__call_fn_last` <- function() {
+    call_last <- mut_node_car(sys.call(-1), fn_last)
     eval_bare(call_last, parent.frame(2))
   }
-  `__rest` <- rev(fs[-n])
+  `__fns_rest` <- rev(fns[-n])
 
-  set_attrs(
-    `formals<-`(
-      value = formals(last),
-      function() {
-        out <- `__call_last`()
-        for (f in `__rest`)
-          out <- f(out)
-        out
-      }
-    ),
-    class = "composite_function"
-  )
+  fn_comp <- function() {
+    out <- `__call_fn_last`()
+    for (f in `__fns_rest`)
+      out <- f(out)
+    out
+  }
+  formals(fn_comp) <- formals(fn_last)
+  class(fn_comp) <- "composite_function"
+
+  fn_comp
 }
 
 #' @rdname compose
@@ -43,7 +41,7 @@ decompose <- function(x) {
   if (!inherits(x, "composite_function"))
     abort("Not a composite function")
 
-  environment(x)$fs
+  environment(x)$fns
 }
 
 #' @export
