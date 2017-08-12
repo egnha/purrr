@@ -11,7 +11,7 @@
 #' add1 <- function(x) x + 1
 #' compose(add1, add1)(8)
 compose <- function(...) {
-  fns <- lapply(dots_list(...), rlang::as_function)
+  fns <- flatten_fn_list(...)
   n <- length(fns)
 
   fn_last <- as_closure(fns[[n]])
@@ -31,6 +31,18 @@ compose <- function(...) {
   class(fn_comp) <- "composite_function"
 
   fn_comp
+}
+
+flatten_fn_list <- function(...) {
+  fns <- lapply(dots_list(...), as_decomposed_function)
+  unlist(fns)
+}
+
+as_decomposed_function <- function(x) {
+  if (inherits(x, "composite_function"))
+    decompose(x)
+  else
+    rlang::as_function(x)
 }
 
 #' @rdname compose

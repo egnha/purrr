@@ -48,3 +48,19 @@ test_that("compose() inverts decompose() (upon splicing)", {
   f <- compose(identity, log, abs, `+`)
   expect_equal(compose(!!! decompose(f)), f)
 })
+
+test_that("nested compositions are unnested", {
+  compose(log, abs, sin, `+`) %>%
+    expect_equal(
+      compose(log, abs, sin, compose(`+`))
+    ) %>%
+    expect_equal(
+      compose(log, abs, compose(sin,  compose(`+`)))
+    ) %>%
+    expect_equal(
+      compose(log, compose(abs, compose(sin,  compose(`+`))))
+    ) %>%
+    expect_equal(
+      compose(compose(log, compose(abs, compose(sin,  compose(`+`)))))
+    )
+})
