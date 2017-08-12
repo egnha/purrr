@@ -16,8 +16,8 @@ compose <- function(...) {
 
   fn_last <- as_closure(fns[[n]])
   `__call_fn_last` <- function() {
-    call_last <- mut_node_car(sys.call(-1), fn_last)
-    eval_bare(call_last, parent.frame(2))
+    call <- new_language(fn_last, node_cdr(sys.call(-1)))
+    eval_bare(call, parent.frame(2))
   }
   `__fns_rest` <- rev(fns[-n])
 
