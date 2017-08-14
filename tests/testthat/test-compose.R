@@ -42,6 +42,12 @@ test_that("composite function can be decomposed", {
   expect_equivalent(decompose(f), list(identity, log, abs, `+`))
 })
 
+test_that("decompose() inverts compose() for function lists (upon splicing)", {
+  fns1 <- list(identity, log, abs, `+`)
+  fns2 <- decompose(compose(!!! fns1))
+  expect_equivalent(fns2, fns1)
+})
+
 test_that("compose() inverts decompose() (upon splicing)", {
   f <- compose(identity, log, abs, `+`)
   expect_equal(compose(!!! decompose(f)), f)
