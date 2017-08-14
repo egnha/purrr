@@ -25,11 +25,9 @@ test_that("first called function is called in calling environment", {
 test_that("function-formulas are indeed interpreted as functions", {
   cmp1 <- compose(identity, ~ . + 1)
   cmp2 <- compose(~ . + 1, identity)
-  for (x in runif(10)) {
-    (x + 1) %>%
-      expect_equal(cmp1(x)) %>%
-      expect_equal(cmp2(x))
-  }
+  set.seed(1)
+  for (x in runif(10))
+    (x + 1) %>% expect_equal(cmp1(x)) %>% expect_equal(cmp2(x))
 })
 
 test_that("list of functions can be spliced", {
